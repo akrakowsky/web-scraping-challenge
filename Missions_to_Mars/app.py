@@ -1,9 +1,13 @@
 # import necessary libraries
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
+from flask_pymongo import PyMongo
 
 # create instance of Flask app
 app = Flask(__name__)
 
+ # Initialize PyMongo to work with MongoDBs
+conn = 'mongodb://localhost:27017'
+client = pymongo.MongoClient(conn)
 
 # create route that renders index.html template
 @app.route("/")
@@ -40,10 +44,6 @@ def scrape():
     return listings
 https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/index.html
     
-    
- # Initialize PyMongo to work with MongoDBs
-conn = 'mongodb://localhost:27017'
-client = pymongo.MongoClient(conn)
 
 # Define database and collection
 db = client.craigslist_db
