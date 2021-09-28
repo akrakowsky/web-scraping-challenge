@@ -21,16 +21,18 @@ def scrape_all():
     data = {
         "news_title": news_title,
         "new_paragraph": new_paragraph,
-        "featured_image": featured_image(browser)
+        "featured_image": featured_image(browser),
+        "mars_facts": mars_facts(),
+        "hemispheres": mars_hemis(browser)
     }
     browser.quit()
     return data
 
 # Find the latest news title
-def mars_news():
+def mars_news(browser):
     #executable path
-    executable_path = {'executable_path': ChromeDriverManager().install()}
-    browser = Browser('chrome', **executable_path, headless=False)
+    #executable_path = {'executable_path': ChromeDriverManager().install()}
+    #browser = Browser('chrome', **executable_path, headless=False)
     # Visit site
     url = 'https://mars.nasa.gov/news/'
     browser.visit(url)
@@ -52,15 +54,15 @@ def mars_news():
     except:
         return None, None
     
-    browser.quit()
+    # browser.quit()
     return news_title, new_paragraph
     
 
 # Find the Featured Image
-def featured_image():
+def featured_image(browser):
     #executable path
-    executable_path = {'executable_path': ChromeDriverManager().install()}
-    browser = Browser('chrome', **executable_path, headless=False)
+    #executable_path = {'executable_path': ChromeDriverManager().install()}
+    #browser = Browser('chrome', **executable_path, headless=False)
     url = 'https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/index.html'
     browser.visit(url)
     browser.links.find_by_partial_text('FULL IMAGE').click()
@@ -79,78 +81,64 @@ def featured_image():
     main_url = 'https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/'
     featured_image_url = main_url + image_url
     
-    browser.quit()
+    # browser.quit()
     return featured_image_url
 
 
 # Find Mars facts
-def mars_facts(browser):
-    return None
+def mars_facts():
+    # Create dataframe
+    mars_url = 'https://space-facts.com/mars/'
+    mars_df = pd.read_html(mars_url)[0]
+    mars_df.columns = ['Description', 'Value']
+    mars_df.set_index('Description', inplace=True)
+    
+    return mars_df.to_html(classes="table table-striped")
 
 # Find Mars Hemispheres
 def mars_hemis(browser):
-    return None
+    # Setup splinter
+    #executable_path = {'executable_path': ChromeDriverManager().install()}
+    #browser = Browser('chrome', **executable_path, headless=False)
 
-#browser.quit()
+    # List url
+    hemi_url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+    browser.visit(hemi_url)
 
-# # ## Mars Facts
+    # Create html
+    html = browser.html
+    hemi_soup = soup(html, 'html.parser')
+
+    # Make a list for the hemispheres
+    hemisphere_image_urls = []
+
+    # Find all of the hemispheres
+    links = browser.find_by_css("a.product-item h3")
+
+    for i in range(len(links)):
+        hemisphere = {}
+        browser.find_by_css("a.product-item h3")[i].click()
+        #Find the image tag and extract
+        try:
+            sample_element = browser.links.find_by_text("Sample").first
+            title = browser.find_by_css("h2.title").text
+            link = sample_element["href"]
+
+            hemisphere["Title"] = title
+            hemisphere["Link"] = link
+
+            hemisphere_image_urls.append(hemisphere)
+            browser.back()
+        except:
+            return None
+        
+
+    return hemisphere_image_urls
+
+    #browser.quit()
 
 
-# # Create url
-# mars_url = 'https://space-facts.com/mars/'
 
-# # Create dataframe
-# mars_df = pd.read_html(mars_url)[0]
-# mars_df
-
-
-# mars_df.columns = ['Description', 'Value']
-# mars_df
-
-# mars_df.set_index('Description', inplace=True)
-# mars_df
-
-
-# mars_df.to_html()
-
-
-# # ## Mars Hemispheres
-
-
-# # Setup splinter
-# executable_path = {'executable_path': ChromeDriverManager().install()}
-# browser = Browser('chrome', **executable_path, headless=False)
-
-# # List url
-# hemi_url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
-# browser.visit(hemi_url)
-
-# # Create html
-# html = browser.html
-
-# hemi_soup = soup(html, 'html.parser')
-
-# # Make a list for the hemispheres
-# hemisphere_image_urls = []
-
-# # Find all of the hemispheres
-# links = browser.find_by_css("a.product-item h3")
-
-# for i in range(len(links)):
-#     hemisphere = {}
-#     browser.find_by_css("a.product-item h3")[i].click()
-#     #Find the image tag and extrat
-#     sample_element = browser.links.find_by_text("Sample").first
-#     title = browser.find_by_css("h2.title").text
-#     link = sample_element["href"]
-    
-#     hemisphere["Title"] = title
-#     hemisphere["Link"] = link
-    
-#     hemisphere_image_urls.append(hemisphere)
-#     browser.back()
-    
-# print(hemisphere_image_urls)
 
 
 
