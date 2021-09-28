@@ -12,7 +12,7 @@ mongo = PyMongo(app, uri="mongodb://localhost:27017/mars_db")
 # create route that renders index.html template
 @app.route("/")
 def index():
-    mars = mongo.db.mars
+    mars = mongo.db.mars.find_one()
     return render_template("index.html", mars=mars)
 
 @app.route("/scrape")
