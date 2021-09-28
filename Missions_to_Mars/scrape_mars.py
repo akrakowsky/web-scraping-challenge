@@ -4,12 +4,9 @@
 # ## Mission to Mars
 
 
-#get_ipython().system('pip install pymongo')
-
 # Dependencies
 from bs4 import BeautifulSoup as soup
 import requests
-import pymongo
 from splinter import Browser 
 from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
@@ -26,11 +23,14 @@ def scrape_all():
         "new_paragraph": new_paragraph,
         "featured_image": featured_image(browser)
     }
-
+    browser.quit()
     return data
 
 # Find the latest news title
-def mars_news(browser):
+def mars_news():
+    #executable path
+    executable_path = {'executable_path': ChromeDriverManager().install()}
+    browser = Browser('chrome', **executable_path, headless=False)
     # Visit site
     url = 'https://mars.nasa.gov/news/'
     browser.visit(url)
@@ -52,10 +52,15 @@ def mars_news(browser):
     except:
         return None, None
     
+    browser.quit()
     return news_title, new_paragraph
+    
 
 # Find the Featured Image
-def featured_image(browser):
+def featured_image():
+    #executable path
+    executable_path = {'executable_path': ChromeDriverManager().install()}
+    browser = Browser('chrome', **executable_path, headless=False)
     url = 'https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/index.html'
     browser.visit(url)
     browser.links.find_by_partial_text('FULL IMAGE').click()
@@ -74,7 +79,9 @@ def featured_image(browser):
     main_url = 'https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/'
     featured_image_url = main_url + image_url
     
+    browser.quit()
     return featured_image_url
+
 
 # Find Mars facts
 def mars_facts(browser):
@@ -84,7 +91,7 @@ def mars_facts(browser):
 def mars_hemis(browser):
     return None
 
-browser.quit()
+#browser.quit()
 
 # # ## Mars Facts
 
