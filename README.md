@@ -11,7 +11,7 @@ build a web application that scrapes various websites for data related to the Mi
     3. scrape_mars.py
     4. Templates
        1. index.html
-    5. Screen shots
+    5. Screenshots
 2. License
 3. ReadMe
 
