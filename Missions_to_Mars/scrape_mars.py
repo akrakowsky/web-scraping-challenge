@@ -23,7 +23,7 @@ def scrape_all():
         "new_paragraph": new_paragraph,
         "featured_image": featured_image(browser),
         "mars_facts": mars_facts(),
-        "hemispheres": mars_hemis(browser)
+        "hemispheres": hemispheres(browser)
     }
     browser.quit()
     return data
@@ -96,7 +96,7 @@ def mars_facts():
     return mars_df.to_html(classes="table table-striped")
 
 # Find Mars Hemispheres
-def mars_hemis(browser):
+def hemispheres(browser):
     # Setup splinter
     #executable_path = {'executable_path': ChromeDriverManager().install()}
     #browser = Browser('chrome', **executable_path, headless=False)
